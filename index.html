@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriCoach AI - Smart Chat Assistant for Personalized Fitness and Nutrition</title>
+    <meta name="description" content="A smart chat assistant for personalized fitness and nutrition guidance with workout recommendations, meal planning, and progress tracking">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Prevent favicon requests -->
+    <link rel="icon" href="data:,"">
+</head>
+<body class="bg-gray-50 font-sans transition-colors duration-200">
+    <!-- Animated Background -->
+    <div id="animated-bg" aria-hidden="true"></div>
+    <!-- Theme Toggle Button (desktop only, hidden on mobile when logged in) -->
+    <button id="theme-toggle-btn" class="theme-toggle-btn hidden md:block" aria-label="Toggle light/dark mode">
+        <i class="ri-moon-line"></i>
+        <span class="sr-only">Toggle theme</span>
+    </button>
+    <div id="app">
+        <!-- Login Screen (Initially Visible) -->
+        <div id="login-screen" class="min-h-screen flex items-center justify-center p-6">
+            <div class="w-full max-w-md">
+                <div class="text-center mb-10">
+                    <div class="inline-flex items-center mb-4">
+                        <i class="ri-heart-pulse-fill text-blue-600 text-5xl mr-2"></i>
+                        <h1 class="font-bold text-3xl text-gray-800">NutriCoach<span class="text-blue-600">AI</span></h1>
+                    </div>
+                    <h2 class="font-semibold text-xl text-gray-700">Your Smart Fitness & Nutrition Assistant</h2>
+                    <p class="text-gray-600 mt-2">Sir A's Fitness Gym, Barangay Sta. Anastacia, Santo Tomas, Batangas</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="font-semibold text-xl text-gray-800 mb-4">Sign In</h3>
+                    <form id="login-form">
+                        <div class="mb-4">
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                                placeholder="name@gmail.com"
+                                required
+                            >
+                        </div>
+                        <div class="mb-6">
+                            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                            <input 
+                                type="password" 
+                                id="password" 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                                placeholder="••••••••"
+                                required
+                            >
+                        </div>
+                        <button 
+                            type="submit" 
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300"
+                        >
+                            Sign In
+                        </button>
+                    </form>
+                    <div class="mt-4 text-center">
+                        <p class="text-sm text-gray-600">Don't have an account? <a href="#" class="text-blue-600 font-medium hover:text-blue-700">Sign Up</a></p>
+                    </div>
+                </div>
+
+                <div class="mt-8 grid grid-cols-3 gap-2">
+                    <div 
+                        class="rounded-lg h-24 w-full bg-blue-600 flex items-center justify-center text-white"
+                    >
+                        <i class="ri-heart-pulse-line text-2xl"></i>
+                    </div>
+                    <div 
+                        class="rounded-lg h-24 w-full bg-green-600 flex items-center justify-center text-white"
+                    >
+                        <i class="ri-restaurant-line text-2xl"></i>
+                    </div>
+                    <div 
+                        class="rounded-lg h-24 w-full bg-purple-600 flex items-center justify-center text-white"
+                    >
+                        <i class="ri-line-chart-line text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard (Initially Hidden) -->
+        <div id="dashboard-screen" class="hidden">
+            <!-- Header for mobile -->
+            <header class="bg-white shadow-sm sticky top-0 z-20 md:hidden flex items-center justify-between px-4 py-3">
+                <div class="flex items-center space-x-2">
+                    <i class="ri-heart-pulse-fill text-blue-600 text-2xl"></i>
+                    <h1 class="text-lg font-bold text-gray-800">NutriCoach<span class="text-blue-600">AI</span></h1>
+                </div>
+                <button id="mobile-hamburger-btn" class="text-gray-500 focus:outline-none flex items-center justify-center" aria-label="Open menu">
+                    <i class="ri-menu-3-line text-2xl"></i>
+                </button>
+            </header>
+
+            <!-- Mobile Hamburger Menu (slide-in) -->
+            <div id="mobile-hamburger-menu" class="fixed inset-0 z-40 bg-black bg-opacity-40 hidden md:hidden" style="transition: background 0.2s;">
+                <div class="absolute top-0 right-0 w-64 h-full bg-white dark:bg-[#23272f] shadow-lg flex flex-col" style="transition: transform 0.2s;" tabindex="-1">
+                    <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white text-lg font-bold">JJ</div>
+                            <span class="font-semibold text-gray-800 dark:text-gray-100">Jon Josiah</span>
+                        </div>
+                        <button id="mobile-hamburger-close" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none" aria-label="Close menu">
+                            <i class="ri-close-line text-2xl"></i>
+                        </button>
+                    </div>
+                    <nav class="flex-1 flex flex-col py-4">
+                        <a href="#profile" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+                            <i class="ri-user-line mr-3 text-xl"></i> Profile
+                        </a>
+                        <button id="mobile-logout-btn" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition text-left">
+                            <i class="ri-logout-box-line mr-3 text-xl"></i> Logout
+                        </button>
+                        <button id="mobile-theme-toggle-btn" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition text-left">
+                            <i class="ri-moon-line mr-3 text-xl" id="mobile-theme-toggle-icon"></i>
+                            <span>Toggle Dark Mode</span>
+                        </button>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Main content -->
+            <div class="flex flex-1 flex-col md:flex-row">
+                <!-- Sidebar for desktop -->
+                <aside id="sidebar" class="hidden md:block w-64 fixed inset-y-0 left-0 bg-white shadow-md border-r border-gray-200">
+                    <div class="p-4 flex flex-col items-center border-b">
+                        <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white text-xl font-medium mb-2">JJ</div>
+                        <h3 class="font-medium text-lg">Jon Josiah</h3>
+                        <p class="text-sm text-gray-500">Member since May 2025</p>
+                    </div>
+
+                    <nav class="flex-1 py-4 overflow-y-auto">
+                        <ul class="space-y-1 px-2">
+                            <li>
+                                <a href="#dashboard" class="flex items-center py-3 px-4 rounded-lg transition-colors text-blue-600 bg-blue-50 font-medium">
+                                    <i class="ri-dashboard-line mr-3 text-xl"></i>
+                                    Dashboard
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#chat" class="flex items-center py-3 px-4 rounded-lg transition-colors text-gray-600 hover:text-blue-600 hover:bg-gray-100">
+                                    <i class="ri-chat-3-line mr-3 text-xl"></i>
+                                    AI Chat
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#workouts" class="flex items-center py-3 px-4 rounded-lg transition-colors text-gray-600 hover:text-blue-600 hover:bg-gray-100">
+                                    <i class="ri-heart-pulse-line mr-3 text-xl"></i>
+                                    Workouts
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#meal-plans" class="flex items-center py-3 px-4 rounded-lg transition-colors text-gray-600 hover:text-blue-600 hover:bg-gray-100">
+                                    <i class="ri-restaurant-line mr-3 text-xl"></i>
+                                    Meal Plans
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#supplements" class="flex items-center py-3 px-4 rounded-lg transition-colors text-gray-600 hover:text-blue-600 hover:bg-gray-100">
+                                    <i class="ri-medicine-bottle-line mr-3 text-xl"></i>
+                                    Supplements
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#progress" class="flex items-center py-3 px-4 rounded-lg transition-colors text-gray-600 hover:text-blue-600 hover:bg-gray-100">
+                                    <i class="ri-line-chart-line mr-3 text-xl"></i>
+                                    Progress
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#profile" class="flex items-center py-3 px-4 rounded-lg transition-colors text-gray-600 hover:text-blue-600 hover:bg-gray-100">
+                                    <i class="ri-user-line mr-3 text-xl"></i>
+                                    Profile
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+
+                    <div class="p-4 border-t">
+                        <button id="logout-button" class="w-full justify-start text-gray-600 hover:text-red-500 transition-colors flex items-center">
+                            <i class="ri-logout-box-line mr-3 text-xl"></i>
+                            Logout
+                        </button>
+                    </div>
+                </aside>
+
+                <!-- Mobile menu overlay -->
+                <div id="mobile-menu" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden" onclick="this.classList.add('hidden')">
+                    <div class="absolute inset-y-0 right-0 w-64 bg-white shadow-lg" onclick="event.stopPropagation()">
+                        <div class="p-4 border-b flex justify-between items-center">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">JJ</div>
+                                <div>
+                                    <h3 class="font-semibold">Jon Josiah</h3>
+                                    <p class="text-xs text-gray-500">Member since May 2025</p>
+                                </div>
+                            </div>
+                            <button id="close-menu-button" class="text-gray-500 focus:outline-none">
+                                <i class="ri-close-line text-2xl"></i>
+                            </button>
+                        </div>
+                        
+                        <nav class="p-4">
+                            <ul class="space-y-2">
+                                <li>
+                                    <a href="#dashboard" class="flex items-center py-2 px-3 rounded-lg text-blue-600 font-medium bg-blue-50 transition-colors duration-200">
+                                        <i class="ri-dashboard-line mr-3 text-xl"></i>
+                                        Dashboard
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#chat" class="flex items-center py-2 px-3 rounded-lg text-gray-600 hover:text-blue-600 hover:bg-gray-100 transition-colors duration-200">
+                                        <i class="ri-chat-3-line mr-3 text-xl"></i>
+                                        AI Chat
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#workouts" class="flex items-center py-2 px-3 rounded-lg text-gray-600 hover:text-blue-600 hover:bg-gray-100 transition-colors duration-200">
+                                        <i class="ri-heart-pulse-line mr-3 text-xl"></i>
+                                        Workouts
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#meal-plans" class="flex items-center py-2 px-3 rounded-lg text-gray-600 hover:text-blue-600 hover:bg-gray-100 transition-colors duration-200">
+                                        <i class="ri-restaurant-line mr-3 text-xl"></i>
+                                        Meal Plans
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#supplements" class="flex items-center py-2 px-3 rounded-lg text-gray-600 hover:text-blue-600 hover:bg-gray-100 transition-colors duration-200">
+                                        <i class="ri-medicine-bottle-line mr-3 text-xl"></i>
+                                        Supplements
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#progress" class="flex items-center py-2 px-3 rounded-lg text-gray-600 hover:text-blue-600 hover:bg-gray-100 transition-colors duration-200">
+                                        <i class="ri-line-chart-line mr-3 text-xl"></i>
+                                        Progress
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#profile" class="flex items-center py-2 px-3 rounded-lg text-gray-600 hover:text-blue-600 hover:bg-gray-100 transition-colors duration-200">
+                                        <i class="ri-user-line mr-3 text-xl"></i>
+                                        Profile
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                        
+                        <div class="p-4 mt-auto border-t">
+                            <button id="mobile-logout-button" class="flex items-center text-gray-600 hover:text-red-500 transition-colors duration-200 w-full">
+                                <i class="ri-logout-box-line mr-3 text-xl"></i>
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content area -->
+                <main class="flex-1 md:ml-64 pb-16 md:pb-0">
+                    <!-- Dashboard Content -->
+                    <div id="dashboard-content" class="container mx-auto px-4 py-6">
+                        <h2 class="text-2xl font-bold mb-6">Welcome back, Josiah!</h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                            <div class="bg-white rounded-xl shadow-sm p-4">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <h3 class="text-gray-500 text-sm">Weight</h3>
+                                        <p class="text-2xl font-bold">78 kg</p>
+                                    </div>
+                                    <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">↓ 2kg</span>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white rounded-xl shadow-sm p-4">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <h3 class="text-gray-500 text-sm">Calories Today</h3>
+                                        <p class="text-2xl font-bold">1,840</p>
+                                    </div>
+                                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full">2,200 goal</span>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white rounded-xl shadow-sm p-4">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <h3 class="text-gray-500 text-sm">Workouts</h3>
+                                        <p class="text-2xl font-bold">4</p>
+                                    </div>
+                                    <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">This week</span>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white rounded-xl shadow-sm p-4">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <h3 class="text-gray-500 text-sm">Water Intake</h3>
+                                        <p class="text-2xl font-bold">1.8 L</p>
+                                    </div>
+                                    <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">↓ Goal: 2.5L</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                            <div class="bg-white rounded-xl shadow-sm p-6">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="font-semibold text-lg">Weekly Progress</h3>
+                                    <select class="text-sm border rounded px-2 py-1 text-gray-600">
+                                        <option>Last 7 days</option>
+                                        <option>Last 30 days</option>
+                                        <option>Last 90 days</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="flex flex-col space-y-4">
+                                    <div>
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-sm font-medium">Workout Completion</span>
+                                            <span class="text-sm font-medium text-gray-500">80%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-blue-600 h-2 rounded-full" style="width: 80%"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-sm font-medium">Nutrition Goals</span>
+                                            <span class="text-sm font-medium text-gray-500">65%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-purple-600 h-2 rounded-full" style="width: 65%"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-sm font-medium">Sleep Quality</span>
+                                            <span class="text-sm font-medium text-gray-500">70%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-pink-600 h-2 rounded-full" style="width: 70%"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-sm font-medium">Water Intake</span>
+                                            <span class="text-sm font-medium text-gray-500">45%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-yellow-500 h-2 rounded-full" style="width: 45%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white rounded-xl shadow-sm p-6">
+                                <h3 class="font-semibold text-lg mb-4">Upcoming Workouts</h3>
+                                
+                                <div class="space-y-4">
+                                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                                        <div class="bg-blue-100 rounded-lg p-3 mr-4">
+                                            <i class="ri-run-line text-xl text-blue-600"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-medium">HIIT Cardio</h4>
+                                            <p class="text-sm text-gray-500">Today, 6:00 PM • 30 min</p>
+                                        </div>
+                                        <button class="text-gray-400 hover:text-gray-600">
+                                            <i class="ri-more-2-fill"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                                        <div class="bg-purple-100 rounded-lg p-3 mr-4">
+                                            <i class="ri-boxing-line text-xl text-purple-600"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-medium">Upper Body Strength</h4>
+                                            <p class="text-sm text-gray-500">Tomorrow, 7:30 AM • 45 min</p>
+                                        </div>
+                                        <button class="text-gray-400 hover:text-gray-600">
+                                            <i class="ri-more-2-fill"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                                        <div class="bg-yellow-100 rounded-lg p-3 mr-4">
+                                            <i class="ri-yoga-line text-xl text-yellow-500"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-medium">Flexibility & Recovery</h4>
+                                            <p class="text-sm text-gray-500">Wed, 6:15 PM • 40 min</p>
+                                        </div>
+                                        <button class="text-gray-400 hover:text-gray-600">
+                                            <i class="ri-more-2-fill"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <a href="#workouts" class="block mt-4 w-full py-2 border border-blue-600 text-blue-600 font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-colors duration-200 text-center">
+                                    View All Workouts
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-8">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-semibold text-lg">Today's Meal Plan</h3>
+                                <button class="text-blue-600 text-sm font-medium flex items-center">
+                                    <i class="ri-edit-line mr-1"></i> Customize
+                                </button>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                <!-- Breakfast -->
+                                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                                    <div class="relative h-32">
+                                        <img 
+                                            src="images/breakfast.jpg"
+                                            alt="Healthy breakfast" 
+                                            class="w-full h-full object-cover"
+                                            onerror="this.src='https://images.unsplash.com/photo-1517673132405-a56a62b18caf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&h=300&q=80'" 
+                                        >
+                                        <div class="absolute top-2 left-2 bg-white rounded-full px-3 py-1 text-xs font-medium">
+                                            Breakfast
+                                        </div>
+                                    </div>
+                                    <div class="p-4">
+                                        <h4 class="font-medium mb-1">Protein Oatmeal Bowl</h4>
+                                        <div class="flex items-center text-sm text-gray-500 mb-2">
+                                            <span class="mr-3"><i class="ri-fire-line mr-1"></i> 420 kcal</span>
+                                            <span><i class="ri-scales-3-line mr-1"></i> 22g protein</span>
+                                        </div>
+                                        <p class="text-xs text-gray-600">Oats, whey protein, almond milk, berries, and nuts</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Lunch -->
+                                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                                    <div class="relative h-32">
+                                        <img 
+                                            src="images/lunch.jpg" 
+                                            alt="Healthy lunch" 
+                                            class="w-full h-full object-cover"
+                                            onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&h=300&q=80'" 
+                                        >
+                                        <div class="absolute top-2 left-2 bg-white rounded-full px-3 py-1 text-xs font-medium">
+                                            Lunch
+                                        </div>
+                                    </div>
+                                    <div class="p-4">
+                                        <h4 class="font-medium mb-1">Chicken Quinoa Bowl</h4>
+                                        <div class="flex items-center text-sm text-gray-500 mb-2">
+                                            <span class="mr-3"><i class="ri-fire-line mr-1"></i> 550 kcal</span>
+                                            <span><i class="ri-scales-3-line mr-1"></i> 35g protein</span>
+                                        </div>
+                                        <p class="text-xs text-gray-600">Grilled chicken, quinoa, mixed vegetables, olive oil</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Dinner -->
+                                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                                    <div class="relative h-32">
+                                        <img 
+                                            src="images/dinner.jpg" 
+                                            alt="Healthy dinner" 
+                                            class="w-full h-full object-cover"
+                                            onerror="this.src='https://images.unsplash.com/photo-1467003909585-2f8a72700288?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&h=300&q=80'" 
+                                        >
+                                        <div class="absolute top-2 left-2 bg-white rounded-full px-3 py-1 text-xs font-medium">
+                                            Dinner
+                                        </div>
+                                    </div>
+                                    <div class="p-4">
+                                        <h4 class="font-medium mb-1">Salmon & Veggies</h4>
+                                        <div class="flex items-center text-sm text-gray-500 mb-2">
+                                            <span class="mr-3"><i class="ri-fire-line mr-1"></i> 490 kcal</span>
+                                            <span><i class="ri-scales-3-line mr-1"></i> 32g protein</span>
+                                        </div>
+                                        <p class="text-xs text-gray-600">Baked salmon, brown rice, broccoli, lemon dressing</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Snack -->
+                                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                                    <div class="relative h-32">
+                                        <img 
+                                            src="images/snack.jpg" 
+                                            alt="Healthy snack" 
+                                            class="w-full h-full object-cover"
+                                            onerror="this.src='https://images.unsplash.com/photo-1488477181946-6428a0291777?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&h=300&q=80'" 
+                                        >
+                                        <div class="absolute top-2 left-2 bg-white rounded-full px-3 py-1 text-xs font-medium">
+                                            Snack
+                                        </div>
+                                    </div>
+                                    <div class="p-4">
+                                        <h4 class="font-medium mb-1">Protein Yogurt</h4>
+                                        <div class="flex items-center text-sm text-gray-500 mb-2">
+                                            <span class="mr-3"><i class="ri-fire-line mr-1"></i> 260 kcal</span>
+                                            <span><i class="ri-scales-3-line mr-1"></i> 18g protein</span>
+                                        </div>
+                                        <p class="text-xs text-gray-600">Greek yogurt, honey, mixed berries, chia seeds</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-semibold text-lg">Ask NutriCoach AI</h3>
+                                <a href="#chat" class="text-blue-600 text-sm font-medium">Go to Chat</a>
+                            </div>
+                            
+                            <div class="bg-white rounded-xl shadow-sm p-4">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                    <a href="#chat" class="bg-gray-50 hover:bg-gray-100 text-left p-3 rounded-lg transition-colors duration-200 flex items-center">
+                                        <i class="ri-moon-line mr-2 text-lg text-blue-600"></i>
+                                        <span class="text-sm">How can I improve my sleep quality?</span>
+                                    </a>
+                                    
+                                    <a href="#chat" class="bg-gray-50 hover:bg-gray-100 text-left p-3 rounded-lg transition-colors duration-200 flex items-center">
+                                        <i class="ri-restaurant-line mr-2 text-lg text-purple-600"></i>
+                                        <span class="text-sm">Suggest pre-workout meal options</span>
+                                    </a>
+                                    
+                                    <a href="#chat" class="bg-gray-50 hover:bg-gray-100 text-left p-3 rounded-lg transition-colors duration-200 flex items-center">
+                                        <i class="ri-medicine-bottle-line mr-2 text-lg text-pink-600"></i>
+                                        <span class="text-sm">What supplements should I take for recovery?</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Content (Initially Hidden) -->
+                    <div id="chat-content" class="hidden h-screen flex flex-col">
+                        <div class="bg-white shadow-sm p-4 flex justify-between items-center">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white">
+                                    <i class="ri-robot-line"></i>
+                                </div>
+                                <h2 class="ml-2 font-semibold">NutriCoach AI</h2>
+                            </div>
+                            <div>
+                                <button class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700">
+                                    <i class="ri-information-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto bg-gray-50">
+                            <div class="flex flex-col space-y-4">
+                                <!-- AI and user messages will be dynamically inserted here -->
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white p-4 border-t">
+                            <div class="flex space-x-2">
+                                <input 
+                                    type="text" 
+                                    id="chat-input"
+                                    class="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                                    placeholder="Ask anything about fitness or nutrition..."
+                                >
+                                <button id="send-message-button" class="bg-blue-600 text-white rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0 hover:bg-blue-700">
+                                    <i class="ri-send-plane-fill"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="mt-3 flex flex-wrap gap-2">
+                                <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs rounded-full px-3 py-1 transition-colors duration-200">
+                                    What should I eat after a workout?
+                                </button>
+                                <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs rounded-full px-3 py-1 transition-colors duration-200">
+                                    How can I increase my protein intake?
+                                </button>
+                                <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs rounded-full px-3 py-1 transition-colors duration-200">
+                                    Best exercises for core strength?
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Workout Content -->
+                    <div id="workouts-content" class="container mx-auto px-4 py-6 hidden">
+                        <h2 class="text-2xl font-bold mb-6">Workout Plans</h2>
+                        
+                        <!-- Featured Workout -->
+                        <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full mb-2">Recommended for you</span>
+                                    <h3 class="font-bold text-xl">Upper Body Strength</h3>
+                                    <p class="text-gray-600 mt-1">Focus on chest, shoulders, back, and arms</p>
+                                </div>
+                                <span class="bg-gray-100 text-gray-800 text-sm px-3 py-1 rounded-full">45 min</span>
+                            </div>
+                            <div class="space-y-3 mb-4">
+                                <div class="flex items-center">
+                                    <i class="ri-checkbox-circle-line text-green-500 mr-2"></i>
+                                    <p>Bench Press - 3 sets of 10 reps</p>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="ri-checkbox-circle-line text-green-500 mr-2"></i>
+                                    <p>Shoulder Press - 3 sets of 12 reps</p>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="ri-checkbox-circle-line text-green-500 mr-2"></i>
+                                    <p>Pull-ups - 3 sets of 8 reps</p>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="ri-checkbox-circle-line text-green-500 mr-2"></i>
+                                    <p>Bicep Curls - 3 sets of 12 reps</p>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="ri-checkbox-circle-line text-green-500 mr-2"></i>
+                                    <p>Tricep Extensions - 3 sets of 12 reps</p>
+                                </div>
+                            </div>
+                            <button class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200">
+                                Start Workout
+                            </button>
+                        </div>
+                        
+                        <!-- Workout List -->
+                        <h3 class="font-semibold text-lg mb-3">All Workouts</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white hover-card rounded-xl shadow-sm p-4">
+                                <div class="flex justify-between">
+                                    <h4 class="font-semibold">Lower Body Focus</h4>
+                                    <span class="text-sm text-gray-500">40 min</span>
+                                </div>
+                                <p class="text-gray-600 text-sm mt-1">Leg day workout with squat focus</p>
+                                <div class="flex justify-between mt-3">
+                                    <span class="text-xs bg-gray-100 rounded-full px-2 py-1">Intermediate</span>
+                                    <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                        View Details
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white hover-card rounded-xl shadow-sm p-4">
+                                <div class="flex justify-between">
+                                    <h4 class="font-semibold">HIIT Cardio</h4>
+                                    <span class="text-sm text-gray-500">30 min</span>
+                                </div>
+                                <p class="text-gray-600 text-sm mt-1">High-intensity intervals for fat burning</p>
+                                <div class="flex justify-between mt-3">
+                                    <span class="text-xs bg-gray-100 rounded-full px-2 py-1">Advanced</span>
+                                    <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                        View Details
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white hover-card rounded-xl shadow-sm p-4">
+                                <div class="flex justify-between">
+                                    <h4 class="font-semibold">Core Blast</h4>
+                                    <span class="text-sm text-gray-500">25 min</span>
+                                </div>
+                                <p class="text-gray-600 text-sm mt-1">Focus on abdominals and lower back</p>
+                                <div class="flex justify-between mt-3">
+                                    <span class="text-xs bg-gray-100 rounded-full px-2 py-1">Beginner</span>
+                                    <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                        View Details
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white hover-card rounded-xl shadow-sm p-4">
+                                <div class="flex justify-between">
+                                    <h4 class="font-semibold">Full Body Workout</h4>
+                                    <span class="text-sm text-gray-500">55 min</span>
+                                </div>
+                                <p class="text-gray-600 text-sm mt-1">Complete workout for all major muscle groups</p>
+                                <div class="flex justify-between mt-3">
+                                    <span class="text-xs bg-gray-100 rounded-full px-2 py-1">Intermediate</span>
+                                    <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                        View Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div
+                    
+                    <!-- Meal Plans Content -->
+                    <div id="meal-plans-content" class="container mx-auto px-4 py-6 hidden">
+                        <h2 class="text-2xl font-bold mb-6">Meal Plans</h2>
+                        
+                        <!-- Nutrition Summary -->
+                        <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                            <h3 class="font-bold text-lg mb-4">Today's Nutrition</h3>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                                <div>
+                                    <h4 class="text-sm text-gray-500">Calories</h4>
+                                    <p class="font-bold text-xl">1,840 / 2,200</p>
+                                    <div class="w-full bg-gray-200 rounded-full h-2 mt-1">
+                                        <div class="bg-blue-600 h-2 rounded-full" style="width: 84%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm text-gray-500">Protein</h4>
+                                    <p class="font-bold text-xl">120g / 150g</p>
+                                    <div class="w-full bg-gray-200 rounded-full h-2 mt-1">
+                                        <div class="bg-purple-600 h-2 rounded-full" style="width: 80%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm text-gray-500">Carbs</h4>
+                                    <p class="font-bold text-xl">190g / 220g</p>
+                                    <div class="w-full bg-gray-200 rounded-full h-2 mt-1">
+                                        <div class="bg-yellow-500 h-2 rounded-full" style="width: 86%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm text-gray-500">Fat</h4>
+                                    <p class="font-bold text-xl">58g / 73g</p>
+                                    <div class="w-full bg-gray-200 rounded-full h-2 mt-1">
+                                        <div class="bg-green-500 h-2 rounded-full" style="width: 79%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Meal Plan Cards -->
+                        <div class="space-y-6">
+                            <!-- Breakfast -->
+                            <div class="bg-white rounded-xl shadow-sm p-5">
+                                <div class="flex items-center mb-4">
+                                    <div class="p-2 bg-blue-100 rounded-full mr-3">
+                                        <i class="ri-sun-line text-blue-600"></i>
+                                    </div>
+                                    <h3 class="font-semibold text-lg">Breakfast</h3>
+                                    <span class="ml-auto text-sm text-gray-500">7:30 AM • 550 calories</span>
+                                </div>
+                                <div class="space-y-3">
+                                    <div class="flex items-start">
+                                        <div class="w-16 h-16 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 mr-3">
+                                            <i class="ri-restaurant-line text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-medium">Protein Oatmeal with Berries</h4>
+                                            <p class="text-sm text-gray-600">1 cup oats, 1 scoop protein powder, 1/2 cup mixed berries, 1 tbsp honey</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <div class="w-16 h-16 rounded-lg bg-green-100 flex items-center justify-center text-green-600 mr-3">
+                                            <i class="ri-cup-line text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-medium">Green Smoothie</h4>
+                                            <p class="text-sm text-gray-600">1 banana, 1 cup spinach, 1/2 avocado, 1 cup almond milk</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Lunch -->
+                            <div class="bg-white rounded-xl shadow-sm p-5">
+                                <div class="flex items-center mb-4">
+                                    <div class="p-2 bg-yellow-100 rounded-full mr-3">
+                                        <i class="ri-sun-foggy-line text-yellow-600"></i>
+                                    </div>
+                                    <h3 class="font-semibold text-lg">Lunch</h3>
+                                    <span class="ml-auto text-sm text-gray-500">12:30 PM • 650 calories</span>
+                                </div>
+                                <div class="space-y-3">
+                                    <div class="flex items-start">
+                                        <img 
+                                            src="images/chicken-salad.jpg" 
+                                            alt="Chicken salad" 
+                                            class="w-16 h-16 rounded-lg object-cover mr-3"
+                                            onerror="this.src='https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100'"
+                                        >
+                                        <div>
+                                            <h4 class="font-medium">Grilled Chicken Salad</h4>
+                                            <p class="text-sm text-gray-600">4 oz grilled chicken breast, mixed greens, cherry tomatoes, cucumber, olive oil dressing</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <div 
+                                            class="w-16 h-16 rounded-lg bg-amber-500 flex items-center justify-center mr-3 text-white"
+                                        >
+                                            <i class="ri-seedling-line text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-medium">Baked Sweet Potato</h4>
+                                            <p class="text-sm text-gray-600">1 medium sweet potato, 1 tsp coconut oil</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Dinner -->
+                            <div class="bg-white rounded-xl shadow-sm p-5">
+                                <div class="flex items-center mb-4">
+                                    <div class="p-2 bg-indigo-100 rounded-full mr-3">
+                                        <i class="ri-moon-line text-indigo-600"></i>
+                                    </div>
+                                    <h3 class="font-semibold text-lg">Dinner</h3>
+                                    <span class="ml-auto text-sm text-gray-500">7:00 PM • 640 calories</span>
+                                </div>
+                                <div class="space-y-3">
+                                    <div class="flex items-start">
+                                        <img 
+                                            src="images/salmon.jpg" 
+                                            alt="Grilled salmon" 
+                                            class="w-16 h-16 rounded-lg object-cover mr-3"
+                                            onerror="this.src='https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100'"
+                                        >
+                                        <div>
+                                            <h4 class="font-medium">Baked Salmon</h4>
+                                            <p class="text-sm text-gray-600">5 oz salmon fillet, lemon, dill, 1 tsp olive oil</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <div 
+                                            class="w-16 h-16 rounded-lg bg-amber-600 flex items-center justify-center mr-3 text-white"
+                                        >
+                                            <i class="ri-plant-line text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-medium">Quinoa with Roasted Vegetables</h4>
+                                            <p class="text-sm text-gray-600">1/2 cup quinoa, bell peppers, zucchini, red onion, 1 tbsp olive oil</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Supplements Content -->
+                    <div id="supplements-content" class="container mx-auto px-4 py-6 hidden">
+                        <h2 class="text-2xl font-bold mb-6">Supplement Recommendations</h2>
+                        
+                        <!-- Recommended Supplements -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                            <div class="bg-white rounded-xl shadow-sm overflow-hidden hover-card">
+                                <div class="h-40 bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6">
+                                    <h3 class="font-bold text-xl mb-1">Whey Protein</h3>
+                                    <p class="text-blue-100 mb-4">Essential for muscle recovery</p>
+                                    <div class="px-2 py-1 bg-white text-blue-600 rounded-full text-xs font-medium inline-block">
+                                        Highly Recommended
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <div class="space-y-3 mb-4">
+                                        <div class="flex items-start">
+                                            <i class="ri-check-line text-green-500 mr-2 mt-1"></i>
+                                            <p class="text-sm">20-25g protein post-workout for optimal recovery</p>
+                                        </div>
+                                        <div class="flex items-start">
+                                            <i class="ri-check-line text-green-500 mr-2 mt-1"></i>
+                                            <p class="text-sm">Choose a product with minimal additives and sugars</p>
+                                        </div>
+                                        <div class="flex items-start">
+                                            <i class="ri-check-line text-green-500 mr-2 mt-1"></i>
+                                            <p class="text-sm">Contains essential amino acids to support muscle growth</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm font-medium text-gray-600">Recommended dose: 1-2 scoops daily</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white rounded-xl shadow-sm overflow-hidden hover-card">
+                                <div class="h-40 bg-gradient-to-r from-purple-500 to-pink-600 text-white p-6">
+                                    <h3 class="font-bold text-xl mb-1">Creatine Monohydrate</h3>
+                                    <p class="text-purple-100 mb-4">Improves performance and strength</p>
+                                    <div class="px-2 py-1 bg-white text-purple-600 rounded-full text-xs font-medium inline-block">
+                                        Performance Enhancer
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <div class="space-y-3 mb-4">
+                                        <div class="flex items-start">
+                                            <i class="ri-check-line text-green-500 mr-2 mt-1"></i>
+                                            <p class="text-sm">Increases phosphocreatine stores in muscles</p>
+                                        </div>
+                                        <div class="flex items-start">
+                                            <i class="ri-check-line text-green-500 mr-2 mt-1"></i>
+                                            <p class="text-sm">Supports ATP production for high-intensity workouts</p>
+                                        </div>
+                                        <div class="flex items-start">
+                                            <i class="ri-check-line text-green-500 mr-2 mt-1"></i>
+                                            <p class="text-sm">No loading phase needed - consistent daily use is effective</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm font-medium text-gray-600">Recommended dose: 5g daily</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white rounded-xl shadow-sm overflow-hidden hover-card">
+                                <div class="h-40 bg-gradient-to-r from-green-500 to-teal-600 text-white p-6">
+                                    <h3 class="font-bold text-xl mb-1">Fish Oil</h3>
+                                    <p class="text-green-100 mb-4">Essential fatty acids for health</p>
+                                    <div class="px-2 py-1 bg-white text-green-600 rounded-full text-xs font-medium inline-block">
+                                        Overall Health
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <div class="space-y-3 mb-4">
+                                        <div class="flex items-start">
+                                            <i class="ri-check-line text-green-500 mr-2 mt-1"></i>
+                                            <p class="text-sm">Rich in omega-3 fatty acids EPA and DHA</p>
+                                        </div>
+                                        <div class="flex items-start">
+                                            <i class="ri-check-line text-green-500 mr-2 mt-1"></i>
+                                            <p class="text-sm">Supports joint health and reduces inflammation</p>
+                                        </div>
+                                        <div class="flex items-start">
+                                            <i class="ri-check-line text-green-500 mr-2 mt-1"></i>
+                                            <p class="text-sm">Benefits cardiovascular health and cognitive function</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm font-medium text-gray-600">Recommended dose: 1-2g daily</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Additional Supplement Info -->
+                        <div class="bg-white rounded-xl shadow-sm p-6">
+                            <h3 class="font-bold text-lg mb-4">Personalized Supplement Schedule</h3>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead>
+                                        <tr>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supplement</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timing</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dosage</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Purpose</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        <tr>
+                                            <td class="px-4 py-4 whitespace-nowrap">
+                                                <div class="font-medium">Whey Protein</div>
+                                            </td>
+                                            <td class="px-4 py-4 whitespace-nowrap">Post-workout</td>
+                                            <td class="px-4 py-4 whitespace-nowrap">25g (1 scoop)</td>
+                                            <td class="px-4 py-4">Muscle recovery and growth</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-4 py-4 whitespace-nowrap">
+                                                <div class="font-medium">Creatine Monohydrate</div>
+                                            </td>
+                                            <td class="px-4 py-4 whitespace-nowrap">Morning</td>
+                                            <td class="px-4 py-4 whitespace-nowrap">5g</td>
+                                            <td class="px-4 py-4">Strength and performance</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-4 py-4 whitespace-nowrap">
+                                                <div class="font-medium">Fish Oil</div>
+                                            </td>
+                                            <td class="px-4 py-4 whitespace-nowrap">With meal</td>
+                                            <td class="px-4 py-4 whitespace-nowrap">1g</td>
+                                            <td class="px-4 py-4">Joint health and inflammation reduction</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-4 py-4 whitespace-nowrap">
+                                                <div class="font-medium">Vitamin D3</div>
+                                            </td>
+                                            <td class="px-4 py-4 whitespace-nowrap">Morning</td>
+                                            <td class="px-4 py-4 whitespace-nowrap">2000 IU</td>
+                                            <td class="px-4 py-4">Bone health and immune function</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Progress Content -->
+                    <div id="progress-content" class="container mx-auto px-4 py-6 hidden">
+                        <h2 class="text-2xl font-bold mb-6">Your Progress</h2>
+                        
+                        <!-- Progress Summary -->
+                        <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                            <h3 class="font-bold text-lg mb-4">3-Month Overview</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div class="bg-blue-50 rounded-lg p-4 text-center">
+                                    <h4 class="text-gray-600 text-sm mb-1">Weight Change</h4>
+                                    <p class="text-3xl font-bold text-blue-600">-4.3 kg</p>
+                                    <span class="text-sm text-green-600">
+                                        <i class="ri-arrow-down-line inline-block"></i>
+                                        5.3% from starting
+                                    </span>
+                                </div>
+                                <div class="bg-purple-50 rounded-lg p-4 text-center">
+                                    <h4 class="text-gray-600 text-sm mb-1">Strength Increase</h4>
+                                    <p class="text-3xl font-bold text-purple-600">+18%</p>
+                                    <span class="text-sm text-green-600">
+                                        <i class="ri-arrow-up-line inline-block"></i>
+                                        Across major lifts
+                                    </span>
+                                </div>
+                                <div class="bg-green-50 rounded-lg p-4 text-center">
+                                    <h4 class="text-gray-600 text-sm mb-1">Workout Consistency</h4>
+                                    <p class="text-3xl font-bold text-green-600">87%</p>
+                                    <span class="text-sm text-blue-600">
+                                        4.4 workouts per week
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Weight Progress Card -->
+                        <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="font-bold text-lg">Weight History</h3>
+                                <select class="bg-gray-100 text-gray-800 text-sm rounded-lg px-3 py-2 focus:outline-none">
+                                    <option>Last 3 months</option>
+                                    <option>Last 6 months</option>
+                                    <option>Last 12 months</option>
+                                    <option>All time</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Placeholder for chart -->
+                            <div class="h-60 bg-gray-100 rounded-lg mb-6 overflow-hidden relative">
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="text-center">
+                                        <i class="ri-line-chart-line text-4xl text-gray-400 mb-2"></i>
+                                        <p class="text-gray-500">Weight tracking chart would appear here</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Weight log entries -->
+                            <h4 class="font-medium text-gray-700 mb-3">Recent Entries</h4>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                                    <div>
+                                        <p class="font-medium">78.2 kg</p>
+                                        <p class="text-xs text-gray-500">May 8, 2025</p>
+                                    </div>
+                                    <span class="text-green-600 text-sm">
+                                        <i class="ri-arrow-down-line inline-block"></i>
+                                        0.3 kg
+                                    </span>
+                                </div>
+                                <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                                    <div>
+                                        <p class="font-medium">78.5 kg</p>
+                                        <p class="text-xs text-gray-500">May 1, 2025</p>
+                                    </div>
+                                    <span class="text-green-600 text-sm">
+                                        <i class="ri-arrow-down-line inline-block"></i>
+                                        0.5 kg
+                                    </span>
+                                </div>
+                                <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                                    <div>
+                                        <p class="font-medium">79.0 kg</p>
+                                        <p class="text-xs text-gray-500">April 24, 2025</p>
+                                    </div>
+                                    <span class="text-green-600 text-sm">
+                                        <i class="ri-arrow-down-line inline-block"></i>
+                                        0.8 kg
+                                    </span>
+                                </div>
+                                <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                                    <div>
+                                        <p class="font-medium">79.8 kg</p>
+                                        <p class="text-xs text-gray-500">April 17, 2025</p>
+                                    </div>
+                                    <span class="text-red-600 text-sm">
+                                        <i class="ri-arrow-up-line inline-block"></i>
+                                        0.2 kg
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- Add Entry Button -->
+                            <button class="w-full mt-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200">
+                                Add New Entry
+                            </button>
+                        </div>
+                        
+                        <!-- Body Measurements Card -->
+                        <div class="bg-white rounded-xl shadow-sm p-6">
+                            <h3 class="font-bold text-lg mb-4">Body Measurements</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                                <div>
+                                    <p class="text-sm text-gray-600 mb-1">Chest</p>
+                                    <div class="flex justify-between">
+                                        <p class="font-semibold">105 cm</p>
+                                        <span class="text-green-600 text-sm">+2 cm</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                        <div class="bg-blue-600 h-1.5 rounded-full" style="width: 75%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-600 mb-1">Waist</p>
+                                    <div class="flex justify-between">
+                                        <p class="font-semibold">82 cm</p>
+                                        <span class="text-green-600 text-sm">-4 cm</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                        <div class="bg-blue-600 h-1.5 rounded-full" style="width: 65%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-600 mb-1">Arms</p>
+                                    <div class="flex justify-between">
+                                        <p class="font-semibold">38 cm</p>
+                                        <span class="text-green-600 text-sm">+1.5 cm</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                        <div class="bg-blue-600 h-1.5 rounded-full" style="width: 80%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-600 mb-1">Legs</p>
+                                    <div class="flex justify-between">
+                                        <p class="font-semibold">60 cm</p>
+                                        <span class="text-green-600 text-sm">+2 cm</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                        <div class="bg-blue-600 h-1.5 rounded-full" style="width: 70%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="w-full mt-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition duration-200">
+                                Update Measurements
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Content -->
+                    <div id="profile-content" class="container mx-auto px-4 py-6 hidden">
+                        <h2 class="text-2xl font-bold mb-6">Your Profile</h2>
+                        
+                        <!-- Profile Card -->
+                        <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                            <div class="flex flex-col md:flex-row items-center md:items-start">
+                                <div class="w-32 h-32 rounded-full bg-blue-600 flex items-center justify-center text-white text-4xl font-bold mb-4 md:mb-0 md:mr-6">
+                                    JJ
+                                </div>
+                                <div class="text-center md:text-left">
+                                    <h3 class="text-2xl font-bold">Jon Josiah</h3>
+                                    <p class="text-gray-600 mb-4">Member since May 2025</p>
+                                    <div class="flex flex-wrap gap-2 justify-center md:justify-start">
+                                        <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">Weight Loss</span>
+                                        <span class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">Strength Training</span>
+                                        <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Nutrition Focus</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Personal Information -->
+                        <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                            <h3 class="font-bold text-lg mb-4">Personal Information</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                                    <input type="text" value="Jon Josiah" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                    <input type="email" value="jon.josiah@gmail.com" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                                    <input type="tel" value="+63 912 345 6789" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Birthday</label>
+                                    <input type="date" value="1990-05-15" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+                                    <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                        <option>Male</option>
+                                        <option>Female</option>
+                                        <option>Non-binary</option>
+                                        <option>Prefer not to say</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                                    <input type="text" value="Barangay Sta. Anastacia, Santo Tomas, Batangas" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Physical Information -->
+                        <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                            <h3 class="font-bold text-lg mb-4">Physical Information</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Height</label>
+                                    <input type="text" value="178 cm" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Current Weight</label>
+                                    <input type="text" value="78 kg" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Target Weight</label>
+                                    <input type="text" value="75 kg" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Activity Level</label>
+                                    <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                        <option>Moderately Active</option>
+                                        <option>Sedentary</option>
+                                        <option>Lightly Active</option>
+                                        <option>Very Active</option>
+                                        <option>Extremely Active</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Fitness Goal</label>
+                                    <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                        <option>Weight Loss</option>
+                                        <option>Muscle Gain</option>
+                                        <option>Strength Increase</option>
+                                        <option>Endurance Building</option>
+                                        <option>Overall Health</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Experience Level</label>
+                                    <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                        <option>Intermediate</option>
+                                        <option>Beginner</option>
+                                        <option>Advanced</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Save Button -->
+                        <button id="save-profile-button" class="w-full max-w-xs mx-auto block py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200">
+                            Save Changes
+                        </button>
+                    </div>
+                </main>
+            </div>
+            <!-- Restore mobile bottom navbar -->
+            <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10 md:hidden">
+                <div class="grid grid-cols-5 h-16">
+                    <a href="#dashboard" class="flex flex-col items-center justify-center text-blue-600">
+                        <i class="ri-dashboard-line text-xl"></i>
+                        <span class="text-xs mt-1">Home</span>
+                    </a>
+                    <a href="#workouts" class="flex flex-col items-center justify-center text-gray-600 hover:text-blue-600">
+                        <i class="ri-heart-pulse-line text-xl"></i>
+                        <span class="text-xs mt-1">Workouts</span>
+                    </a>
+                    <a href="#chat" class="flex flex-col items-center justify-center text-gray-600 hover:text-blue-600">
+                        <i class="ri-chat-3-line text-xl"></i>
+                        <span class="text-xs mt-1">AI Chat</span>
+                    </a>
+                    <a href="#meal-plans" class="flex flex-col items-center justify-center text-gray-600 hover:text-blue-600">
+                        <i class="ri-restaurant-line text-xl"></i>
+                        <span class="text-xs mt-1">Meals</span>
+                    </a>
+                    <a href="#progress" class="flex flex-col items-center justify-center text-gray-600 hover:text-blue-600">
+                        <i class="ri-line-chart-line text-xl"></i>
+                        <span class="text-xs mt-1">Progress</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/ai/gemini.js"></script>
+</body>
+</html>
