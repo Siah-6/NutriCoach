@@ -2,42 +2,47 @@ document.addEventListener('DOMContentLoaded', function() {
     function setupImageErrorHandlers() {
         const allImages = document.querySelectorAll('img');
         allImages.forEach(img => {
-            if (!img.hasAttribute('data-error-handled')) {
-                img.setAttribute('data-error-handled', 'true');
-                
-                let bgColor = '#2563eb';
-                if (img.closest('#meal-plans-content')) {
-                    bgColor = '#16a34a';
-                } else if (img.closest('#supplements-content')) {
-                    bgColor = '#9333ea';
-                } else if (img.closest('#progress-content')) {
-                    bgColor = '#f59e0b';
-                }
-                
-                let icon = 'ri-image-line';
-                if (img.closest('#workouts-content')) {
-                    icon = 'ri-heart-pulse-line';
-                } else if (img.closest('#meal-plans-content')) {
-                    icon = 'ri-restaurant-line';
-                } else if (img.closest('#supplements-content')) {
-                    icon = 'ri-medicine-bottle-line';
-                } else if (img.closest('#progress-content')) {
-                    icon = 'ri-line-chart-line';
-                }
-                
-                const imgTimeout = setTimeout(() => {
-                    handleImageError(img, bgColor, icon);
-                }, 2000);
-                
-                img.onerror = function() {
-                    clearTimeout(imgTimeout);
-                    handleImageError(this, bgColor, icon);
-                };
-                
-                img.onload = function() {
-                    clearTimeout(imgTimeout);
-                };
+            // Skip logo image from error handling
+            if (
+                img.hasAttribute('data-error-handled') ||
+                img.src.includes('images/NutriLogo.png')
+            ) {
+                return;
             }
+            img.setAttribute('data-error-handled', 'true');
+            
+            let bgColor = '#2563eb';
+            if (img.closest('#meal-plans-content')) {
+                bgColor = '#16a34a';
+            } else if (img.closest('#supplements-content')) {
+                bgColor = '#9333ea';
+            } else if (img.closest('#progress-content')) {
+                bgColor = '#f59e0b';
+            }
+            
+            let icon = 'ri-image-line';
+            if (img.closest('#workouts-content')) {
+                icon = 'ri-heart-pulse-line';
+            } else if (img.closest('#meal-plans-content')) {
+                icon = 'ri-restaurant-line';
+            } else if (img.closest('#supplements-content')) {
+                icon = 'ri-medicine-bottle-line';
+            } else if (img.closest('#progress-content')) {
+                icon = 'ri-line-chart-line';
+            }
+            
+            const imgTimeout = setTimeout(() => {
+                handleImageError(img, bgColor, icon);
+            }, 2000);
+            
+            img.onerror = function() {
+                clearTimeout(imgTimeout);
+                handleImageError(this, bgColor, icon);
+            };
+            
+            img.onload = function() {
+                clearTimeout(imgTimeout);
+            };
         });
     }
     
